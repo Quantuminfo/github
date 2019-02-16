@@ -36,6 +36,16 @@ d=d.value
 B=B.value
 #vamos comecar o segundo passo
 R1,D,R2=np.linalg.svd(B, full_matrices=True)
-print(R1)
-print(D)
-print(R2)
+#Iremos encontrar as conjugações unitárias a partir de R1 e R2
+#primeiro para R1
+w1,v1=np.linalg.eig(R1)
+for j in range(len(w)-1):
+    if w[j].imag == 0 :
+        n_hat=v[j]
+trR1=0
+for m in range(len(w)-1):
+    trR1=trR1 + w[m]
+
+alpha1 = np.arccos((trR1 - 1)*0.5)
+#definindo as matrizes de pauli
+sig1,sig2,sig3 = np.array([0,1],[1,0]),np.array([0,-j],[j,0]),np.array([1,0],[0,-1])
