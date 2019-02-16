@@ -43,7 +43,7 @@ w1,v1=np.linalg.eig(R1)
 for j in range(len(w1)):
     if w1[j].imag == 0 :
         v = v1[j]
-print(v)
+
 trR1=0
 for m in range(len(w1)):
     trR1=trR1 + w1[m]
@@ -55,15 +55,16 @@ sig1,sig2,sig3 = np.array([[0,1],[1,0]]),np.array([[0,-j],[j,0]]),np.array([[1,0
 U1=np.cos(alpha1*0.5)*np.identity(2, dtype=float) + j*np.sin(alpha1*0.5)*(v[0]*sig1 + v[1]*sig2 +v[2]*sig3)
 
 w2,v2=np.linalg.eig(R2)
-print(w2)
+
 
 for j in range(len(w2)):
     if w2[j].imag == 0:
-         h = v2[j]
-print(h)
+         v_p = v2[j]
+
 
 trR2=0
 for l in range(len(w2)):
     trR2=trR2 + w2[l]
 
 alpha2 = np.arccos((trR2 - 1)*0.5)
+U2=np.cos(alpha2*0.5)*np.identity(2, dtype=float) + j*np.sin(alpha2*0.5)*(v_p[0]*sig1 + v_p[1]*sig2 +v_p[2]*sig3)
