@@ -44,9 +44,7 @@ for j in range(len(w1)):
     if w1[j].imag == 0 :
         v = v1[j]
 
-trR1=0
-for m in range(len(w1)):
-    trR1=trR1 + w1[m]
+trR1=R1[1][1]+R1[2][2]+R1[0][0]
 
 alpha1 = np.arccos((trR1 - 1)*0.5)
 #definindo as matrizes de pauli
@@ -62,9 +60,30 @@ for j in range(len(w2)):
          v_p = v2[j]
 
 
-trR2=0
-for l in range(len(w2)):
-    trR2=trR2 + w2[l]
+trR2=R2[1][1]+R2[2][2]+R2[0][0]
+
 
 alpha2 = np.arccos((trR2 - 1)*0.5)
 U2=np.cos(alpha2*0.5)*np.identity(2, dtype=float) + j*np.sin(alpha2*0.5)*(v_p[0]*sig1 + v_p[1]*sig2 +v_p[2]*sig3)
+#agora so precisamos dos operadores de Kraus
+choi = np.array([[(1+D[2]+d[2])*0.5,0,(d[0]+j*d[1])*0.5,(D[0]+D[1])*0.5],[0,(1-D[2]+d[2])*0.5,(D[0]-D[1])*0.5,(d[0]+j*d[1])*0.5],[(d[0]-j*d[1])*0.5,(D[0]-D[1])*0.5,(1-D[2]-d[2])*0.5,0],[(D[0]+D[1])*0.5,(d[0]-j*d[1])*0.5,0,(1+D[2]-d[2])*0.5]])
+w3,v3=np.linalg.eigh(choi)
+#definindo os projetores
+P1,P2 = np.array([[1,0,0,0],[0,1,0,0]]),np.array([[0,0,1,0],[0,0,0,1]])
+for j in range(len(w3)):
+    v3[j]=np.transpose(v3[j])
+#definindo K_dagger(op à esquerda)
+K_dagger=[0,1,2,3]
+for j in range(len(w3)):
+    K_dagger[j]=np.array([[np.matmul(P1,v3[j])],[np.matmul(P2,v3[j])]])
+    K_dagger[j]=np.sqrt(w3[j])*K_dagger[j]
+    
+#operadores de Kraus(op à direita)
+K=[0,1,2,3]
+for j in range(len(K)):
+    K[j]=np.ndarray.conjugate(K_dagger[j])
+    K[j]=np.transpose(K[j])
+
+
+    
+        
