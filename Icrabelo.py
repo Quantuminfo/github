@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Fri Oct 12 15:15:04 2018
 
@@ -8,23 +6,35 @@ Created on Fri Oct 12 15:15:04 2018
 import cvxpy as cvx
 import numpy as np
 
+
 B=cvx.Variable((3,3),PSD=True) #Matriz do Elipsoide
 d=cvx.Variable(3,1) #Centro do Elipsoide
 constrains=[] #vinculos
-n=int(input("Numero de linhas:"))#Numero de linhas da matriz do Politopo
-c1,c2,c3=input("Primeira coluna:"),input("Segunda coluna:"),input("Terceira coluna:")#Colunas da matriz do Politopo
+
+inputiq= open("inputiq.txt")
+q=inputiq.readlines()
+inputiq.close()
+
+c1,c2,c3=q[0],q[1],q[2]#Colunas da matriz do Politopo
 c1,c2,c3=c1.split(),c2.split(),c3.split()
-for i in range(n):
-    c1[i],c2[i],c3[i]=float(c1[i]),float(c2[i]),float(c3[i])
 C=np.array([c1,c2,c3])
 C=np.transpose(C)
 
-b=input("Vetor independente:")#Vetor do Politopo(Ax-b<=0)
+for i in range(len(C)):
+    c1[i],c2[i],c3[i]=float(c1[i]),float(c2[i]),float(c3[i])
+
+
+
+for i in range(len(C)):
+    c1[i],c2[i],c3[i]=float(c1[i]),float(c2[i]),float(c3[i])
+
+
+b=q[3] #Vetor do Politopo(Ax-b<=0)
 b=b.split()
-for i in range(n):
+for i in range(len(C)):
     b[i]=float(b[i])
 
-for i in range(n):
+for i in range(len(C)):
     C_t=np.array([[C[i][0]],[C[i][1]],[C[i][2]]])
     constrains.append(cvx.norm(cvx.matmul(B,C_t)) + cvx.matmul(C[i],d)<= b[i])
      #Vinculos do Problema
