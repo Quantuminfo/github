@@ -76,22 +76,47 @@ trR2=R2[1][1]+R2[2][2]+R2[0][0]
 alpha2 = np.arccos((trR2 - 1)*0.5)
 U2=np.cos(alpha2*0.5)*np.identity(2, dtype=float) + j*np.sin(alpha2*0.5)*(v_p[0]*sig1 + v_p[1]*sig2 +v_p[2]*sig3)
 #agora so precisamos dos operadores de Kraus
-choi = np.array([[(1+D[2]+d[2]),0,(d[0]+j*d[1]),(D[0]+D[1])],[0,(1-D[2]+d[2]),(D[0]-D[1]),(d[0]+j*d[1])],[(d[0]-j*d[1]),(D[0]-D[1]),(1-D[2]-d[2]),0],[(D[0]+D[1]),(d[0]-j*d[1]),0,(1+D[2]-d[2])]])
-choi=0.5*choi
+choi = 0.5*(np.array([[(1+D[2]+d[2]),(d[0]+j*d[1]),0,(D[0]+D[1])],[(d[0]-j*d[1]),(1-D[2]-d[2]),(D[0]-D[1]),0],[0,(D[0]-D[1]),(1-D[2]+d[2]),(d[0]+j*d[1])],[(D[0]+D[1]),0,(d[0]-j*d[1]),(1+D[2]-d[2])]]))
 w3,v3=np.linalg.eig(choi)
 #definindo os projetores
 P1,P2 = np.array([[1,0,0,0],[0,1,0,0]]),np.array([[0,0,1,0],[0,0,0,1]])
+P1,P2=np.reshape(P1,(2,4)),np.reshape(P2,(2,4))
 v3=np.transpose(v3)
-#definindo K_dagger(op à esquerda)
-K_dagger=[0,1,2,3]
+#definindo K(op à esquerda)
+K=[0,1,2,3]
+
 
 for j in range(len(w3)):
-    K_dagger[j]=np.array([[np.matmul(P1,v3[j])],[np.matmul(P2,v3[j])]])
-    K_dagger[j]=np.sqrt(w3[j])*K_dagger[j]
-
-#operadores de Kraus(op à direita)
-K=[0,1,2,3]
-for j in range(len(K)):
-    K[j]=np.ndarray.conjugate(K_dagger[j])
+    if w3[j] <= 10**(-3):
+        w3[j]=0
+    for i in range(len(w3)):
+        if abs(v3[j][i]) <= 10**(-3):
+            v3[j][i]=0
+    v3[j]=np.transpose(v3[j])
+    K[j]=np.array([[np.matmul(P1,v3[j])],[np.matmul(P2,v3[j])]])
     K[j]=np.transpose(K[j])
-print(K)
+    K[j]=np.sqrt(w3[j])*K[j]
+    K[j]=np.reshape(K[j],(2,2))
+
+#operadores de Kraus à direita K_dagger
+K_dagger=[0,1,2,3]
+
+for j in range(len(K)):
+    K_dagger[j]=np.matrix.conjugate(K[j])
+    K_dagger[j]=np.transpose(K_dagger[j])
+    K_dagger[j]=np.reshape(K_dagger[j],(2,2))
+
+ro=np.array([[1,0],[0,0]])
+ro=np.reshape(ro,(2,2))
+au=[0,0,0,0]
+aux=[0,0,0,0]
+for i in range(len(K)):
+    au[i]=np.matmul(K[i],ro)
+    aux[i]=np.matmul(au[i],K_dagger[i])
+rop=aux[0]+aux[1]+aux[2]+aux[3]
+I=[0,0,0,0]
+for i in range(len(K)):
+    I[i]=np.matmul(K_dagger[i],K[i])
+I=I[0]+I[1]+I[2]+I[3]
+print(rop)
+print(I)
