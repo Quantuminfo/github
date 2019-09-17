@@ -3,6 +3,7 @@ Created on Fri Oct 12 15:15:04 2018
 
 @author: pedrolauand
 """
+#Esse código acha a decomposição de Kraus de um mapa completamente positivo que leva a esfera de Bloch em Elipsoide determinado
 import cvxpy as cvx
 import numpy as np
 
